@@ -18,6 +18,11 @@ v.	Develop reusable SQL views summarizing key KPIs like recency, average monthly
 ### Database and Dimensions exploration: 
 Step 1: Database Exploration 
 Explore all objects in the database 
+
+```sql
+SELECT*
+FROM INFORMATION_SCHEMA.TABLES
+```
 SELECT*
 FROM INFORMATION_SCHEMA.TABLES
 --Explore all columns in the database 
