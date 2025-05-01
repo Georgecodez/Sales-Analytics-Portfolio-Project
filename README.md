@@ -155,6 +155,7 @@ c.last_name
 ORDER BY total_revenue DESC
 
 ```
+
 **What is the distribution of sold items across countries** 
 
 ```sql
@@ -170,5 +171,128 @@ c.country
 ORDER BY total_sold_items DESC
 
 ```
+
+## Ranking analysis
+**Which 5 products generate the highest revenue** 
+
+```sql
+
+SELECT TOP 5
+p.product_name,
+SUM(s.sales_amount) AS total_revenue
+FROM dbo.[gold.fact_sales] s
+LEFT JOIN dbo.[gold.dim_products] p
+ON s.product_key = p.product_key
+GROUP BY p.product_name
+ORDER BY total_revenue DESC
+
+```
+
+**What are the worst performing products in terms of sales**
+
+```sql
+
+SELECT TOP 5
+p.product_name,
+SUM(s.sales_amount) AS total_revenue
+FROM dbo.[gold.fact_sales] s
+LEFT JOIN dbo.[gold.dim_products] p
+ON s.product_key = p.product_key
+GROUP BY p.product_name
+ORDER BY total_revenue
+
+```
+
+## Change_over-time analysis
+**Analyze sales performance over years and number of customers**
+
+```sql
+
+SELECT
+Year(order_date) AS order_year,
+SUM(sales_amount) AS total_sales,
+COUNT(DISTINCT customer_key) AS total_customers,
+SUM(quantity) AS total_quantity
+FROM dbo.[gold.fact_sales]
+WHERE order_date IS NOT NULL
+GROUP BY Year(order_date) 
+ORDER BY Year(order_date)
+
+
+```
+
+**Analyze sales perfomance over months** 
+
+```sql
+
+SELECT
+Month(order_date) AS order_year,
+SUM(sales_amount) AS total_sales,
+COUNT(DISTINCT customer_key) AS total_customers,
+SUM(quantity) AS total_quantity
+FROM dbo.[gold.fact_sales]
+WHERE order_date IS NOT NULL
+GROUP BY Month(order_date) 
+ORDER BY Month(order_date)
+
+
+```
+
+
+**Analyze sales perfomance over years and over months** 
+
+```sql
+
+SELECT
+DATETRUNC(month, order_date) AS order_date,
+SUM(sales_amount) AS total_sales,
+COUNT(DISTINCT customer_key) AS total_customers,
+SUM(quantity) AS total_quantity
+FROM dbo.[gold.fact_sales]
+WHERE order_date IS NOT NULL
+GROUP BY DATETRUNC(month, order_date) 
+ORDER BY DATETRUNC(month, order_date)
+
+```
+
+##  Performance analysis 
+**analyze the yearly performance of products by comparing each product's sales to both its average sales performance and the previous year's sales** 
+
+```sql
+
+WITH yearly_product_sales AS (
+    SELECT
+        YEAR(f.order_date) AS order_year,
+        p.product_name,
+        SUM(f.sales_amount) AS current_sales
+    FROM dbo.[gold.fact_sales] f
+    LEFT JOIN dbo.[gold.dim_products] p
+        ON f.product_key = p.product_key
+    WHERE f.order_date IS NOT NULL
+    GROUP BY YEAR(f.order_date), p.product_name
+)
+SELECT
+    order_year,
+    product_name,
+    current_sales,
+    AVG(current_sales) OVER (PARTITION BY product_name) AS avg_sales,
+    current_sales - AVG(current_sales) OVER (PARTITION BY product_name) AS diff_sales,
+    CASE 
+        WHEN current_sales - AVG(current_sales) OVER (PARTITION BY product_name) > 0 THEN 'Above Avg'
+        WHEN current_sales - AVG(current_sales) OVER (PARTITION BY product_name) < 0 THEN 'Below Avg'
+        ELSE 'Avg'
+    END AS avg_change,
+    LAG(current_sales) OVER (PARTITION BY product_name ORDER BY order_year) AS prev_year_sales,
+    current_sales - LAG(current_sales) OVER (PARTITION BY product_name ORDER BY order_year) AS diff_prev_year,
+    CASE 
+        WHEN current_sales - LAG(current_sales) OVER (PARTITION BY product_name ORDER BY order_year) > 0 THEN 'Increase'
+        WHEN current_sales - LAG(current_sales) OVER (PARTITION BY product_name ORDER BY order_year) < 0 THEN 'Decrease'
+        ELSE 'No Change'
+    END AS prev_year_change
+FROM yearly_product_sales
+ORDER BY product_name, order_year;
+
+```
+
 
 
