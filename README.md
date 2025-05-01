@@ -16,7 +16,7 @@ v.	Develop reusable SQL views summarizing key KPIs like recency, average monthly
 
 ## Project Structure 
 ### Database and Dimensions exploration: 
-Step 1: Database Exploration 
+**Step 1: Database Exploration**  
 Explore all objects in the database 
 
 ```sql
@@ -25,18 +25,32 @@ SELECT*
 FROM INFORMATION_SCHEMA.TABLES
 
 ```
-SELECT*
-FROM INFORMATION_SCHEMA.TABLES
+
 --Explore all columns in the database 
+```sql
+
 SELECT*
 FROM INFORMATION_SCHEMA.columns 
 WHERE table_name = 'dim_products'
-Step 2: Dimensions exploration 
+
+```
+
+**Step 2: Dimensions exploration**
 Explore all countries our customers came from 
+
+```sql
+
 SELECT DISTINCT country 
 FROM dbo.[gold.dim_customers]
+
+```
+
 Explore all product and subcategories (Major divisions). 
+
+```sql
+
 SELECT DISTINCT category, subcategory, product_name 
 FROM dbo.[gold.dim_products]
 
+```
 
