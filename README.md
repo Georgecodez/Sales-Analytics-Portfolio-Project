@@ -600,6 +600,21 @@ FROM product_aggregations
 
 ```
 
+## Findings
+**Sales performance**:  high overall sales with consistent yearly growth. Top 5 products generate significantly more revenue than others. 
+**Customer insights**: VIP customers are fewer in number but contribute significant revenue to the company. Most customers showcase short engagement durations (under 12 months). 
+**Temporal trends**: revenue and order volume show consistent cumulative increases year over year. 
+**segmentation analysis**
+: Customer segments, VIP [have a long tenure and generate high revenue [, Regular [have a moderate tenure and show moderate spending], and New [recently acquired customers and has potential for growth]. 
+: Product segments. We segmented the products into high performers, mid-range performers, and low performers. 
+
+## Recomendations
+**Double down on high performing products**: invest in marketing, stock, and bundling strategies for top 5 revenue-generating product.
+**Target and retain VIP customers**: implement loyalty programs and personalized offers for high-value, long-lifespan customers.
+**Review and Optimize Product Portfolio**: consider phasing out low-performing products or re-evaluating their pricing and promotion strategies
+**Improve Onboarding for New Customers**: develop onboarding flows to convert "New" segment customers into “Regular” or “VIP” tiers.
+**Expand in High-Value Regions**: focus expansion efforts on countries with the highest customer and sales concentration.
+
 
 
 
