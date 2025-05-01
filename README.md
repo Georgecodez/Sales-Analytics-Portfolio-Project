@@ -20,8 +20,10 @@ Step 1: Database Exploration
 Explore all objects in the database 
 
 ```sql
+
 SELECT*
 FROM INFORMATION_SCHEMA.TABLES
+
 ```
 SELECT*
 FROM INFORMATION_SCHEMA.TABLES
