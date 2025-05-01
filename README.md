@@ -53,4 +53,22 @@ SELECT DISTINCT category, subcategory, product_name
 FROM dbo.[gold.dim_products]
 
 ```
+## Key business metrics 
+**Generate report that shows all key metrics of our business**
+
+```sql
+
+SELECT 'Total Sales' AS measure_name,  SUM(sales_amount) AS measure_value FROM dbo.[gold.fact_sales]
+UNION ALL
+SELECT 'Total Quantity' AS measure_name, SUM(quantity) AS measure_value FROM dbo.[gold.fact_sales]
+UNION ALL
+SELECT 'Average price' AS measure_name,  AVG(price) AS measure_value FROM dbo.[gold.fact_sales]
+UNION ALL
+SELECT 'Total Nr. of orders' as measure_name, COUNT(DISTINCT order_number) meausure_value FROM dbo.[gold.fact_sales]
+UNION ALL
+SELECT 'Total Nr. of Products' AS measure_name, COUNT(DISTINCT product_key) AS measure_value FROM dbo.[gold.dim_products]
+UNION ALL 
+SELECT 'Total Nr. of Customers' AS measure_name, COUNT(DISTINCT customer_number) AS measure_value FROM dbo.[gold.dim_customers]
+
+```
 
