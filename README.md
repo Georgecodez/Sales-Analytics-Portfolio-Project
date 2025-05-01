@@ -492,6 +492,115 @@ ORDER BY total_customers DESC
 
 ```
 
+## Build product report
+
+**/*
+==========================================================================================
+Product report
+===========================================================================================
+Purpose: 
+This report consolidates key product metrics and behaviors. 
+Highlights
+	1.Gather essential fields such as product name, category, subcategory, and cost
+	2.Segments products by revenue to identify high-performers, mid-range, and low-performers.
+	3.Aggregates product-level metrics: 
+		-total orders
+		-total sales
+		-total quantity sold
+		-total customers (unique)
+		-Lifespan (in months)
+	4.Calculates valuable KPIs:
+		-recency (months since last sale)
+		-average order revenue (AOR)
+		-average monthly revenue 
+=========================================================================================
+*/**
+
+```sql
+
+CREATE VIEW report_product AS
+WITH base_query AS(
+/*==================================================================================
+Step 1: Base Query: Retrieve core columns from fact_sales and dim_products
+==================================================================================*/
+	SELECT
+		f.order_number,
+		f.order_date,
+		f.customer_key,
+		f.sales_amount,
+		f.quantity,
+		p.product_key,
+		p.product_name,
+		p.category,
+		p.subcategory,
+		p.cost
+	FROM dbo.[gold.fact_sales] f
+	LEFT JOIN dbo.[gold.dim_products] p
+	ON f.product_key = p.product_key
+	WHERE order_date IS NOT NULL
+	),
+	product_aggregations AS(
+/*==================================================================================
+ Step 2: Product aggregations: summarizes key metrics at the product level 
+==================================================================================*/
+	SELECT
+		product_key,
+		product_name,
+		category,
+		subcategory,
+		cost,
+		DATEDIFF(month, MIN(order_date), MAX(order_date)) AS lifespan,
+		MAX(order_date) AS last_sale_date,
+		COUNT(DISTINCT customer_key) AS total_customers,
+		COUNT(DISTINCT order_number) AS total_orders,
+		SUM(sales_amount) AS total_sales,
+		SUM(quantity) AS total_quantity,
+		ROUND(AVG(CAST(sales_amount AS FLOAT)/NULLIF(quantity, 0)),1) AS avg_selling_price  
+	FROM base_query
+	GROUP BY
+		product_key,
+		product_name,
+		category,
+		subcategory,
+		cost
+)
+/*==================================================================================
+Step 3: combines all product result into one output
+==================================================================================*/
+SELECT
+	product_key,
+	product_name,
+	category,
+	subcategory,
+	cost,
+	last_sale_date,
+	DATEDIFF(month, last_sale_date, GETDATE()) AS recency_in_months,
+	CASE
+		WHEN total_sales > 50000 THEN 'High_perfomer'
+		WHEN total_sales > 10000 THEN 'Mid_range'
+		ELSE 'Low_perfomer'
+	END AS product_segment,
+	lifespan,
+	total_customers,
+	total_orders,
+	total_sales,
+	total_quantity,
+	avg_selling_price,  
+	--calculate average order revenue (AOR)
+	CASE
+		WHEN total_orders = 0 THEN 0
+		ELSE total_sales/total_orders
+	END AS avg_order_revenue,
+	--calculate average monthly revenue
+	CASE 
+		WHEN lifespan = 0 THEN total_sales
+		ELSE total_sales/lifespan
+	END AS avg_monthly_revenue
+FROM product_aggregations
+
+```
+
+
 
 
 
