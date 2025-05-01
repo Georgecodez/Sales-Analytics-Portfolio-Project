@@ -293,6 +293,30 @@ FROM yearly_product_sales
 ORDER BY product_name, order_year;
 
 ```
+##  Part_to_whole analysis 
+** which categories contribute to the most overall sales**
+
+```sql
+
+WITH category_sales AS(
+	SELECT
+	category,
+	SUM(sales_amount) AS total_sales 
+	FROM dbo.[gold.fact_sales] f
+	LEFT JOIN dbo.[gold.dim_products] p
+	ON p.product_key = f.product_key
+	GROUP BY category
+)
+SELECT
+	category,
+	total_sales,
+	SUM(total_sales) OVER() overall_sales,
+	CONCAT (ROUND((CAST(total_sales AS FLOAT) / SUM(total_sales) OVER()) * 100, 2), '%') AS percentage_of_total
+FROM category_sales
+ORDER BY total_sales DESC
+
+```
+
 
 
 
