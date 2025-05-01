@@ -14,4 +14,22 @@ iv.	Perform time-based trend analysis to track sales, customer growth, and order
 
 v.	Develop reusable SQL views summarizing key KPIs like recency, average monthly spend, product lifespan, and order frequency for reporting. 
 
+## Project Structure 
+### Database and Dimensions exploration: 
+Step 1: Database Exploration 
+Explore all objects in the database 
+SELECT*
+FROM INFORMATION_SCHEMA.TABLES
+--Explore all columns in the database 
+SELECT*
+FROM INFORMATION_SCHEMA.columns 
+WHERE table_name = 'dim_products'
+Step 2: Dimensions exploration 
+Explore all countries our customers came from 
+SELECT DISTINCT country 
+FROM dbo.[gold.dim_customers]
+Explore all product and subcategories (Major divisions). 
+SELECT DISTINCT category, subcategory, product_name 
+FROM dbo.[gold.dim_products]
+
 
