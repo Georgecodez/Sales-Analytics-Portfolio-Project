@@ -1,2 +1,5 @@
 # Sales-Analytics-Portfolio-Project
-In this repository, we conslidates key customer metrics and behaviors and segments customers and products into categories. We utilize SQL scripts to demonstrate various analytical techniques. 
+
+## Project Overview 
+This project conducts a detailed analysis of a sales database to unravel valuable insights about products, customers, and overall business performance. We leverage SQL to explore, aggregate and segment data from multiple dimensions such as demographics, product categories, and purchasing behavior. The outcome depicts detailed and actionable reports that could aid strategic decision-making. 
+
